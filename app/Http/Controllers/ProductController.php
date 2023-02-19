@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -15,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
 
-        $data = Product::all();
+        $data = Product::with('category')->get();
         return $data;
        
     }
@@ -31,9 +32,27 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+
+     public function allProducts($userid)
+     {
+         $products=Product::with('category')->get();
+ 
+         $userProducts=User::find($userid)->products()->get();
+ 
+         return ["products"=>$products,"cart"=>$userProducts];
+     } 
+    public function store(Request $request): array
     {
-        //
+        $product = new Product;
+        $product->name=$request->name;
+        $product->price = $request->price;
+        $product->image= $request->image;
+        $product->description = $request->description;
+        $product->cid = $request->cid;
+
+        $product->save();
+
+        return ["success"=>true, "message" => "Product Created"];
     }
 
     /**
@@ -56,16 +75,27 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(Request $request, string $id)
     {
         //
+        $product = Product::find($id);
+        $product->name=$request->name;
+        $product->price = $request->price;
+        $product->image= $request->image;
+        $product->description = $request->description;
+        $product->cid = $request->cid;
+        $product->save();
+
+        return ["success"=>true, "message" => "Product Updated"];
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): RedirectResponse
-    {
-        //
+    public function destroy(string $id){
+        $product = Product::find($id);
+        $product->delete();
+        return ["success"=>true, "message" => "Product Deleted"];
     }
 }

@@ -15,9 +15,10 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-        //
+        $users = User::all();
+        return $users;
     }
 
     /**
@@ -25,7 +26,7 @@ class UserController extends Controller
      */
     public function create(): Response
     {
-        //
+        
     }
 
     /**
@@ -46,20 +47,22 @@ class UserController extends Controller
     {
         $credentials = $request->only(['email','password']);
         if(Auth::attempt($credentials)) {
-            //$token = $request->user()->createToken("login_token")->plainTextToken;
-            //return ["token"=>$token];
-            return ["success"=>true,"message"=>"Logged in"];
+           $token = $request->user()->createToken("login_token")->plainTextToken;
+            // return ["token"=>$token];
+            return ["success"=>true,"message"=>"Logged in", "token" => $token,  "user" => $request->user()];
         }
+        else
         return ["success"=>false,"message"=>"Error"];
     }
-
+    
+   
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        return Product::find($id);
+        return User::find($id);
     }
 
     /**
@@ -73,16 +76,24 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->contact = $request->contact;
+        $user->save();
+        return ["success"=>true,"message"=>"User updated"];
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): RedirectResponse
+    public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return ["success"=>true, "message" => "user deleted"];
     }
 }
