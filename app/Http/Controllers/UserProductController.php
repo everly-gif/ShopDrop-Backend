@@ -15,9 +15,24 @@ class UserProductController extends Controller
      */
     
      public function userProducts($id){
-        $data = User::find($id)->products()->get();
+       // $data = User::find($id)->products()->where('order_status','!=','1')->get();
+       $data = User::find($id)->products()->get();
         return $data;
      }
+     public function orders($id){
+        $data = User::find($id)->products()->where('order_status','1')->get();
+        return $data;
+     }
+
+     public function orderItems($itemIds){
+        $itemIds=explode(" ",$itemIds);
+        for($i=0;$i<count($itemIds);$i++){
+            $od = UserProduct::find($itemIds[$i]);
+            $od->order_status = 1;
+            $od->save();
+        }
+        return ["success"=>"true","message"=>"Order Successful"];
+    }
  
       public function index(): Response
     {

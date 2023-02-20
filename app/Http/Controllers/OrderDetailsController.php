@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,7 +16,7 @@ class OrderDetailsController extends Controller
      */
     public function index(): Response
     {
-        //
+        
     }
 
     /**
@@ -43,9 +45,21 @@ class OrderDetailsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id): Response
+    public function show(string $id)
     {
-        //
+        
+    }
+
+    public function showUserOrders(string $user_id){
+        // $order = Order::where(["user_id"=>$user_id])->orderDetails()->get();
+
+        $orders=User::find($user_id)->orders()->with('orderDetails')->get();
+
+        //$orders=OrderDetails::where('user_id',$user_id)->with('product')->with('order')->get();
+
+
+        // $userProducts=User::find($user_id)->orderDetails()->get();
+        return $orders;
     }
 
     /**

@@ -35,6 +35,12 @@ class UserController extends Controller
     public function store(Request $request): array
     {
         $user = new User;
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'name' => 'required',
+            "contact" => 'required'
+        ]);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
@@ -46,6 +52,10 @@ class UserController extends Controller
     public function login(Request $request): array
     {
         $credentials = $request->only(['email','password']);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
         if(Auth::attempt($credentials)) {
            $token = $request->user()->createToken("login_token")->plainTextToken;
             // return ["token"=>$token];

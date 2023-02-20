@@ -82,8 +82,6 @@ class ProductController extends Controller
         $product->name=$request->name;
         $product->price = $request->price;
         $product->image= $request->image;
-        $product->description = $request->description;
-        $product->cid = $request->cid;
         $product->save();
 
         return ["success"=>true, "message" => "Product Updated"];
